@@ -1,0 +1,381 @@
+<html>
+  <head>
+    <style>
+      body {
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto,
+    Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  line-height: 1.4;
+  /*   line-height: 1.5; */
+  /*   letter-spacing: 0.12em; */
+  /*   word-spacing: 0.16em; */
+}
+
+:focus {
+  outline: .25em dashed rgba(0, 255, 0, 1);
+}
+
+ul {
+  padding-left: 1.5em;
+}
+
+li {
+  margin-top: .25em;
+}
+
+dl {
+  margin: .25em 0 1em 1.5em;
+}
+
+/* Dialog */
+
+#Overlay {
+  position: absolute;
+  z-index: 150;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0,0,0,.75);
+  display: none;
+  backdrop-filter: blur(.1em); /* Maybe no */
+}
+
+[role="dialog"] {
+  position: absolute;
+  z-index: 200;
+  top: 10vh;
+  bottom: 10vh;
+  left: 10vw;
+  right: 10vw;
+  max-width: 36rem;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: hidden;
+  box-shadow: 0 0 2em rgba(0,0,0,.5);
+  background: #fefefe;
+  padding: 0;
+  visibility: visible;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  [role="dialog"] {
+    transition: transform .1s ease-in, opacity .2s ease-in;
+  }  
+}
+
+[role="dialog"][hidden] {
+  display: block;
+  visibility: hidden;
+  transform: scale(.5);
+  opacity: .6;
+}
+
+[role="dialog"] h2 {
+  margin: .2em;
+  padding: .5rem 1.25rem;
+  background: #333;
+  color: #fefefe;
+}
+
+[role="dialog"] button {
+  float: right;
+  margin: -2.5rem 1.25rem 0 0;
+  padding: 0;
+  text-indent: 5em;
+  line-height: 0;
+  font: inherit;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  width: 1.5em;
+  height: 1.5em;
+  overflow: hidden;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0a50 50 0 1 0 0 100A50 50 0 0 0 50 0zm26.6 76.6a37.5 37.5 0 0 1-53.2 0 37.5 37.5 0 0 1 0-53.2 37.5 37.5 0 0 1 53.2 0 37.5 37.5 0 0 1 0 53.2zm-7.3-45.9a6.6 6.6 0 0 0-9.3 0l-10 10-10-10a6.6 6.6 0 0 0-9.3 9.3l10 10-10 10a6.6 6.6 0 1 0 9.3 9.3l10-10 10 10a6.6 6.6 0 0 0 9.3 0 6.6 6.6 0 0 0 0-9.3l-10-10 10-10a6.6 6.6 0 0 0 0-9.3z' fill='%23fff'/%3E%3C/svg%3E");
+  background-size: 100%;
+  background-repeat: no-repeat;
+  background-position: 50%;
+}
+
+[role="dialog"] button:focus, [role="dialog"] button:hover {
+/*   outline: .2em solid transparent; */
+  background: #fff;
+  background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0a50 50 0 1 0 0 100A50 50 0 0 0 50 0zm26.6 76.6a37.5 37.5 0 0 1-53.2 0 37.5 37.5 0 0 1 0-53.2 37.5 37.5 0 0 1 53.2 0 37.5 37.5 0 0 1 0 53.2zm-7.3-45.9a6.6 6.6 0 0 0-9.3 0l-10 10-10-10a6.6 6.6 0 0 0-9.3 9.3l10 10-10 10a6.6 6.6 0 1 0 9.3 9.3l10-10 10 10a6.6 6.6 0 0 0 9.3 0 6.6 6.6 0 0 0 0-9.3l-10-10 10-10a6.6 6.6 0 0 0 0-9.3z' fill='%23000'/%3E%3C/svg%3E");
+  box-shadow: -.1em -.1em 0 rgba(255,255,255,1), .1em -.1em 0 rgba(255,255,255,1), -.1em .1em 0 rgba(255,255,255,1), .1em .1em 0 rgba(255,255,255,1);
+}
+
+[role="dialog"] div[role=document] {
+  /*  Need this because of a VoiceOver bug  */
+  display: inline;
+}
+
+[role="dialog"] div[role=document] div {
+  box-sizing: border-box;
+  height: calc(100% - 3rem);
+  overflow: auto;
+  padding: .5rem 1.25rem;
+}
+      </style>
+  </head>
+  
+  <body>
+    <main>
+  <h1>Assorted Dialog Focus Targets</h1>
+
+  <p>
+    The same dialog, except it either gets focus on the dialog itself, the heading within, or the close button.
+  </p>
+
+  <button id="focusDialog" onclick="OpenDialog(this.id,'Dialog');">
+    Focus the dialog
+  </button>
+
+  <button id="focusHeading" onclick="OpenDialog(this.id,'DialogName');">
+    Focus the heading
+  </button>
+
+  <button id="focusClose" onclick="OpenDialog(this.id,'DialogClose');">
+    Focus the close button
+  </button>
+  
+  <p>
+    Used in the post <cite><a href="https://adrianroselli.com/2020/10/dialog-focus-in-screen-readers.html">Dialog Focus in Screen Readers</a></cite>.
+  </p>
+  
+  <ul>
+    <li>JAWS 2020
+      <ul>
+        <li>Chrome 85
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank modal dialog</q></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank modal dialog, Frank heading level 2</q></dd>
+            <dt>Close</dt>
+            <dd><q>Frank modal dialog, Close button</q></dd>
+          </dl>
+        </li>
+        <li>Firefox 81
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank modal dialog, Page has one region one heading and no links,</q> <em>[proceeds to read content]</em></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank modal dialog, Frank heading level 2</q></dd>
+            <dt>Close</dt>
+            <dd><q>Frank modal dialog, Close button</q></dd>
+          </dl>
+        </li>
+        <li>Internet Explorer 11
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank dialog, Frank heading level 2</q></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank dialog, Frank heading level 2</q></dd>
+            <dt>Close</dt>
+            <dd><q>Frank dialog, Close button</q></dd>
+          </dl>
+        </li>
+      </ul>
+    </li>
+    <li>NVDA 2020.2
+      <ul>
+        <li>Chrome 85
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank dialog, selected</q></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank dialog, selected, Frank heading level 2</q></dd>
+            <dt>Close</dt>
+            <dd><q>Frank dialog, selected, Close button</q></dd>
+          </dl>
+        </li>
+        <li>Firefox 81
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank, heading level 2 Frank, button Close, Frank region,</q> <em>[proceeds to read content]</em></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank dialog, document, Frank heading level 2, Frank heading level 2 Frank, button Close, Frank region,</q> <em>[proceeds to read content]</em></dd>
+            <dt>Close</dt>
+            <dd><q>Frank dialog, document, Close button, Frank, button Close, Frank region,</q> <em>[proceeds to read content]</em></dd>
+          </dl>
+        </li>
+      </ul>
+    </li>
+    <li>VoiceOver, macOS 10.15.6 Catalina
+      <ul>
+        <li>Safari
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank, web dialog</q></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank, web dialog, heading level 2, Frank</q></dd>
+            <dt>Close</dt>
+            <dd><q>Frank, web dialog, Close, button</q></dd>
+          </dl>
+        </li>
+        <li>Chrome 85
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank and 2 more items, dialog</q></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank and 2 more items, dialog, heading level 2, Frank</q></dd>
+            <dt>Close</dt>
+            <dd><q>Frank and 2 more items, dialog, Close, button</q></dd>
+          </dl>
+        </li>
+      </ul>
+    </li>
+    <li>TalkBack, Android 11
+      <ul>
+        <li>Chrome 85
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank dialog, document</q></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank, heading 2</q></dd>
+            <dt>Close</dt>
+            <dd><q>Close, button</q></dd>
+          </dl>
+        </li>
+        <li>Firefox 81
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Frank, dialog, Frank paragraph,</q> <em>[proceeds to read content]</em></dd>
+            <dt>Heading</dt>
+            <dd><q>Frank, heading level 2</q></dd>
+            <dt>Close</dt>
+            <dd><q>Close button</q></dd>
+          </dl>
+        </li>
+      </ul>
+    </li>
+    <li>VoiceOver, iOS 14
+      <ul>
+        <li>Safari
+          <dl>
+            <dt>Dialog</dt>
+            <dd><q>Focus the dialog</q></dd>
+            <dt>Heading</dt>
+            <dd><q>Focus the heading</q></dd>
+            <dt>Close</dt>
+            <dd><q>Focus the close</q></dd>
+          </dl>
+        </li>
+      </ul>
+    </li>
+  </ul> -->
+</main>
+
+<div id="Dialog" aria-labelledby="DialogName" role="dialog" tabindex="-1" hidden>
+  <div role="document">
+    <!-- For VO bug -->
+    <h2 id="DialogName" tabindex="-1">Frank</h2>
+    <button type="button" id="DialogClose">Close</button>
+    <!-- Need a region role becase this has a tabindex so keyboard users can scroll the box -->
+    <!-- Ref: https://adrianroselli.com/2016/02/keyboard-and-overflow.html -->
+    <div id="ElementDetail" tabindex="0" role="region" aria-labelledby="DialogName">
+      <p>
+        This is the dialog content.
+      </p>
+
+      <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce ac libero turpis. Curabitur vel massa justo. Sed rutrum, odio ut laoreet eleifend, odio urna euismod lectus, sed luctus odio elit id felis. Aliquam erat volutpat. Maecenas lobortis malesuada dolor nec fermentum. Ut tristique sit amet felis ultricies fermentum. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+      </p>
+
+      <p>
+        Sed aliquam ultrices lacus blandit consequat. Fusce ullamcorper enim in quam facilisis eleifend. Praesent laoreet pulvinar purus ac facilisis. Quisque massa nibh, finibus et laoreet in, tristique a augue. Maecenas pellentesque sapien quis dui cursus tempor.
+      </p>
+
+      <p>
+        Cras quis dictum ante, quis cursus nibh. Mauris venenatis, felis vel elementum gravida, magna lacus feugiat nunc, cursus maximus erat libero quis nunc. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Curabitur faucibus lacinia quam, et pulvinar urna dignissim at. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos.
+      </p>
+    </div>
+  </div>
+</div>
+
+<div id="Overlay"></div>
+    
+    <script>
+      // Inert polyfill https://github.com/GoogleChrome/inert-polyfill
+
+window.addEventListener("load",function(){function h(a,b,c){if(0>b){if(a.previousElementSibling){for(a=a.previousElementSibling;a.lastElementChild;)a=a.lastElementChild;return a}return a.parentElement}if(a!=c&&a.firstElementChild)return a.firstElementChild;for(;null!=a;){if(a.nextElementSibling)return a.nextElementSibling;a=a.parentElement}return null}function g(a){for(;a&&a!==document.documentElement;){if(a.hasAttribute("inert"))return a;a=a.parentElement}return null}(function(a){var b=document.createElement("style");
+b.type="text/css";b.styleSheet?b.styleSheet.cssText=a:b.appendChild(document.createTextNode(a));document.body.appendChild(b)})("/*[inert]*/[inert]{position:relative!important;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;pointer-events:none}[inert]::before{content:'';display:block;position:absolute;top:0;left:0;right:0;bottom:0}");var c=0;document.addEventListener("keydown",function(a){c=9===a.keyCode?a.shiftKey?-1:1:0});document.addEventListener("mousedown",
+function(){c=0});document.body.addEventListener("focus",function(a){var b=a.target,f=g(b);if(f){if(document.hasFocus()&&0!==c){var d=document.activeElement,e=new KeyboardEvent("keydown",{keyCode:9,which:9,key:"Tab",code:"Tab",keyIdentifier:"U+0009",shiftKey:!!(0>c),bubbles:!0});Object.defineProperty(e,"keyCode",{value:9});document.activeElement.dispatchEvent(e);if(d!=document.activeElement)return;for(d=f;;){d=h(d,c,f);if(!d)break;a:{e=b;if(!(0>d.tabIndex)&&(d.focus(),document.activeElement!==e)){e=
+!0;break a}e=!1}if(e)return}}b.blur();a.preventDefault();a.stopPropagation()}},!0);document.addEventListener("click",function(a){g(a.target)&&(a.preventDefault(),a.stopPropagation())},!0)});
+
+document.onkeydown = function(evt) {
+  evt = evt || window.event;
+  var isEscape = false;
+  if ("key" in evt) {
+    isEscape = evt.key == "Escape" || evt.key == "Esc";
+  } else {
+    isEscape = evt.keyCode == 27;
+  }
+  if (isEscape) {
+    CloseDialog(DialogTrigger);
+  }
+};
+
+function OpenDialog(btnID,focusID) {
+  try {
+    DialogTrigger = btnID;
+    // Get all the elements to manipulate
+    var body = document.getElementsByTagName("body");
+    var landmarks = document.querySelectorAll("header, main, footer");
+    var overlay = document.getElementById("Overlay");  
+    var dialog = document.getElementById("Dialog");  
+    var closeBtn = document.getElementById("DialogClose");
+    var focusElm = document.getElementById(focusID);
+    // Hide the content regions from AT
+    for (var i = 0; i < landmarks.length; i++) {
+      landmarks[i].setAttribute("aria-hidden","true");
+      landmarks[i].setAttribute("inert","");
+    }
+    // Hide the content behind the overlay
+    overlay.style.display = "block";
+    // Add click handler to overlay
+    overlay.setAttribute("onclick","CloseDialog('" + btnID + "');");
+    // Kill the page scroll
+    body[0].style.overflow = "hidden";
+    // Set the dialog to modal
+    dialog.setAttribute("aria-modal","true");
+    // dialog.setAttribute("data-id",eID);
+    dialog.removeAttribute("hidden"); 
+    // Put focus on the close button
+    // Normally I would put it on the modal, but this fits
+    closeBtn.setAttribute("onclick","CloseDialog('" + btnID + "');");
+    focusElm.focus();
+  } catch (e) {
+    console.log("OpenDialog(): " + e);
+  }
+}
+
+function CloseDialog(eID) {
+  try {
+    // Get all the elements to manipulate
+    var body = document.getElementsByTagName("body");
+    var landmarks = document.querySelectorAll("header, main, footer");
+    var overlay = document.getElementById("Overlay");
+    var dialog = document.getElementById("Dialog");
+    var triggerBtn = document.getElementById(eID);
+    // Make the regions available to AT
+    for (var i = 0; i < landmarks.length; i++) {
+      landmarks[i].removeAttribute("aria-hidden");
+      landmarks[i].removeAttribute("inert");
+    }
+    // Remove the overlay
+    overlay.style.display = "none";
+    // Return the scrollbar
+    body[0].style.overflow = "auto";
+    // Kill the dialog
+    dialog.removeAttribute("aria-modal");
+    dialog.removeAttribute("data-id");
+    dialog.setAttribute("hidden","");
+    // Return focus to trigger
+    triggerBtn.focus();
+  } catch (e) {
+    console.log("CloseDialog(): " + e);
+  }
+}
+    </script>
+  </body>
+</html>
